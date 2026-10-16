@@ -69,10 +69,13 @@ class UsuariosRepository {
         dto.fecha_nacimiento,
         dto.grupos,
       ]);
-      await client.query(queryCredenciales, [
-        resultUsuario.rows[0].id_usuario,
-        dto.password,
-      ]);
+      // Sin password el usuario queda sin credenciales (no puede loguearse)
+      if (dto.password !== undefined) {
+        await client.query(queryCredenciales, [
+          resultUsuario.rows[0].id_usuario,
+          dto.password,
+        ]);
+      }
       await client.query("COMMIT");
 
       return this.obtenerPorId(resultUsuario.rows[0].id_usuario);
