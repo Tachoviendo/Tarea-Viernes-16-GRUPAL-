@@ -1,0 +1,5 @@
+<h1>Crear usuario</h1>
+
+<a routerLink="/usuarios">Volver</a>
+
+<app-usuario-form [usuario]="nuevoUsuario" (guardar)="crear($event)" />

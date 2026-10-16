@@ -1,0 +1,40 @@
+body {
+  font-family: Arial;
+  background-color: lightyellow;
+  margin: 20px;
+}
+
+input.invalid {
+  border: 1px solid red;
+  outline: none;
+}
+
+input.invalid:focus {
+  outline: 1px solid red;
+  box-shadow: #ccc inset 0px 0px 5px;
+}
+
+output {
+  color: red;
+}
+
+h1 {
+  color: darkblue;
+  text-align: center;
+}
+
+a {
+  color: blue;
+}
+
+button {
+  background-color: blue;
+  color: white;
+  border: 2px solid black;
+  padding: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: red;
+}

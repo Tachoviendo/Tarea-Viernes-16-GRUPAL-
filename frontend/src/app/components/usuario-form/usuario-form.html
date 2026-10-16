@@ -1,0 +1,112 @@
+<div>
+  <form novalidate (submit)="submitForm($event)">
+    <div class="flex-column">
+      <label for="username">Username:</label>
+      <input
+        id="username"
+        type="text"
+        [formField]="usuarioForm.username"
+        [class.invalid]="usuarioForm.username().invalid()"
+      />
+      <output>
+        @if (usuarioForm.username().errors().length > 0) {
+          <small>{{ usuarioForm.username().errors()[0].message }}</small>
+        }
+      </output>
+    </div>
+
+    <div class="flex-column">
+      <label for="nombres">Nombres:</label>
+      <input
+        id="nombres"
+        type="text"
+        [formField]="usuarioForm.nombres"
+        [class.invalid]="usuarioForm.nombres().invalid()"
+      />
+      <output>
+        @if (usuarioForm.nombres().errors().length > 0) {
+          <small>{{ usuarioForm.nombres().errors()[0].message }}</small>
+        }
+      </output>
+    </div>
+
+    <div class="flex-column">
+      <label for="apellidos">Apellidos:</label>
+      <input
+        id="apellidos"
+        type="text"
+        [formField]="usuarioForm.apellidos"
+        [class.invalid]="usuarioForm.apellidos().invalid()"
+      />
+      <output>
+        @if (usuarioForm.apellidos().errors().length > 0) {
+          <small>{{ usuarioForm.apellidos().errors()[0].message }}</small>
+        }
+      </output>
+    </div>
+
+    <div class="flex-column">
+      <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+      <input id="fecha_nacimiento" type="date" [formField]="usuarioForm.fecha_nacimiento" />
+    </div>
+
+    @if (esNuevo()) {
+      <div class="flex-column">
+        <label for="password">Contraseña:</label>
+        <input id="password" type="password" [formField]="usuarioForm.password" />
+      </div>
+    }
+
+    <div class="flex-column">
+      <label>Grupos:</label>
+      <div>
+        <input
+          type="checkbox"
+          [checked]="usuarioModel().grupos.includes('user')"
+          (change)="cambiarGrupo('user', $event)"
+        />
+        user
+        <input
+          type="checkbox"
+          [checked]="usuarioModel().grupos.includes('admin')"
+          (change)="cambiarGrupo('admin', $event)"
+        />
+        admin
+        <input
+          type="checkbox"
+          [checked]="usuarioModel().grupos.includes('superadmin')"
+          (change)="cambiarGrupo('superadmin', $event)"
+        />
+        superadmin
+      </div>
+      <output>
+        @if (usuarioForm.grupos().errors().length > 0) {
+          <small>{{ usuarioForm.grupos().errors()[0].message }}</small>
+        }
+      </output>
+    </div>
+
+    <div class="flex-column">
+      <div>
+        <input id="activo" type="checkbox" [formField]="usuarioForm.activo" />
+        <label for="activo">Activo</label>
+      </div>
+    </div>
+
+    <button type="submit">Guardar</button>
+  </form>
+
+  <!-- Para ver el estado del form mientras se prueba -->
+  <p>
+    Valid username: <strong>{{ this.usuarioForm.username().valid() }}</strong><br />
+    InValid username: <strong>{{ this.usuarioForm.username().invalid() }}</strong><br />
+    Touched username: <strong>{{ this.usuarioForm.username().touched() }}</strong><br />
+    Errors: <strong>{{ this.usuarioForm.username().errors() | json }}</strong>
+  </p>
+
+  <p>
+    Valid form: <strong>{{ this.usuarioForm().valid() }}</strong><br />
+    Invalid form: <strong>{{ this.usuarioForm().invalid() }}</strong><br />
+    Touched form: <strong>{{ this.usuarioForm().touched() }}</strong>
+  </p>
+</div>
