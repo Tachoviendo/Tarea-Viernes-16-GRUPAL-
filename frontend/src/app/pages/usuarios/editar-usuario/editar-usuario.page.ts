@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { UsuarioForm } from '../../../components/usuario-form/usuario-form';
 import { UsuarioDto } from '../../../model/usuario';
+import { ErroresService } from '../../../services/errores.service';
 import { UsuarioService } from '../../../services/usuario.service';
 
 @Component({
@@ -14,13 +15,21 @@ import { UsuarioService } from '../../../services/usuario.service';
 export class EditarUsuarioPage {
   private readonly usuarioService = inject(UsuarioService);
   private readonly router = inject(Router);
+  private readonly erroresService = inject(ErroresService);
 
   // Viene del :id_usuario de la ruta (withComponentInputBinding en app.config)
   readonly idUsuario = input.required<string>({ alias: 'id_usuario' });
 
   protected readonly usuario = resource({
     params: () => ({ id: Number(this.idUsuario()) }),
-    loader: ({ params }) => this.usuarioService.obtenerPorId(params.id),
+    loader: async ({ params }) => {
+      try {
+        return await this.usuarioService.obtenerPorId(params.id);
+      } catch (error) {
+        this.erroresService.agregar(this.erroresService.obtenerMensaje(error));
+        throw error;
+      }
+    },
   });
 
   protected async actualizar(dto: UsuarioDto) {
@@ -32,8 +41,12 @@ export class EditarUsuarioPage {
       activo: dto.activo,
     };
 
-    await this.usuarioService.actualizar(Number(this.idUsuario()), usuarioActualizar);
+    try {
+      await this.usuarioService.actualizar(Number(this.idUsuario()), usuarioActualizar);
 
-    this.router.navigate(['/usuarios']);
+      this.router.navigate(['/usuarios']);
+    } catch (error) {
+      this.erroresService.agregar(this.erroresService.obtenerMensaje(error));
+    }
   }
 }

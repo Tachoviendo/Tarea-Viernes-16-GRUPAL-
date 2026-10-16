@@ -37,7 +37,8 @@ export class UsuarioService {
   }
 
   async eliminar(idUsuario: number): Promise<void> {
-    throw new Error('eliminar todavía no está hecho con la api.');
-    // this.usuarios = this.usuarios.filter((u) => u.id_usuario !== idUsuario);
+    return await firstValueFrom(
+      this._httpClient.delete<void>(`${this.baseUrl}/${idUsuario}`),
+    );
   }
 }

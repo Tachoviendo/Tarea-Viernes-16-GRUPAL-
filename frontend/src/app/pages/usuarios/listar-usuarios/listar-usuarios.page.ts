@@ -28,7 +28,11 @@ export class ListarUsuariosPage {
 
   protected async borrar(idUsuario: number) {
     if (!confirm('¿Borrar este usuario?')) return;
-    await this.usuarioService.eliminar(idUsuario);
-    this.usuarios.reload();
+    try {
+      await this.usuarioService.eliminar(idUsuario);
+      this.usuarios.reload();
+    } catch (error) {
+      this.erroresService.agregar(this.erroresService.obtenerMensaje(error));
+    }
   }
 }
