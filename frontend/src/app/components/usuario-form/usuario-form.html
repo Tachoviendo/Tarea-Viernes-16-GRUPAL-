@@ -47,7 +47,17 @@
 
     <div class="flex-column">
       <label for="fecha_nacimiento">Fecha de nacimiento:</label>
-      <input id="fecha_nacimiento" type="date" [formField]="usuarioForm.fecha_nacimiento" />
+      <input
+        id="fecha_nacimiento"
+        type="date"
+        [formField]="usuarioForm.fecha_nacimiento"
+        [class.invalid]="usuarioForm.fecha_nacimiento().invalid()"
+      />
+      <output>
+        @if (usuarioForm.fecha_nacimiento().errors().length > 0) {
+          <small>{{ usuarioForm.fecha_nacimiento().errors()[0].message }}</small>
+        }
+      </output>
     </div>
 
     @if (esNuevo()) {
