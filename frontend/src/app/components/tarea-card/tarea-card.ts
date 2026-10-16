@@ -1,10 +1,16 @@
 import { DatePipe } from '@angular/common';
-import { Component, input, linkedSignal, output } from '@angular/core';
-import { form, FormField, maxLength, required, submit } from '@angular/forms/signals';
+import { Component, computed, inject, input, linkedSignal, output, resource } from '@angular/core';
+import { form, FormField, maxLength, required, submit, validate } from '@angular/forms/signals';
 
 import { Tarea, TareaDto } from '../../model/tarea';
+import { ErroresService } from '../../services/errores.service';
+import { UsuarioService } from '../../services/usuario.service';
 
-// La card no usa el service: muestra o edita la tarea y avisa a la página con outputs
+const GRUPOS = ['user', 'admin', 'superadmin'];
+const PRIORIDADES = ['0:baja', '1:media', '2:alta'];
+
+// La card no guarda con el service: muestra o edita la tarea y avisa a la página con outputs
+// Solo usa UsuarioService para cargar las opciones del select de creador
 @Component({
   imports: [DatePipe, FormField],
   selector: 'app-tarea-card',
@@ -19,6 +25,28 @@ export class TareaCard {
   public editar = output<number>();
   public eliminar = output<number>();
   public guardar = output<TareaDto>();
+
+  private readonly usuarioService = inject(UsuarioService);
+  private readonly erroresService = inject(ErroresService);
+
+  // Con params undefined el resource no carga: así no se pide en cada card de la lista
+  public usuarios = resource({
+    params: () => (this.editando() ? true : undefined),
+    loader: async () => {
+      try {
+        return await this.usuarioService.obtenerTodos();
+      } catch (error) {
+        this.erroresService.agregar(this.erroresService.obtenerMensaje(error));
+        throw error;
+      }
+    },
+  });
+
+  // La página de crear le pasa una tarea con id_tarea 0
+  public esNueva = computed(() => this.tarea().id_tarea === 0);
+
+  // La api no permite des-terminar una tarea
+  public yaTerminada = computed(() => this.tarea().terminada !== null);
 
   //LinkedSignal para que su valor dependa de la otra señal, y a la vez sea editable
   public tareaModel = linkedSignal(() => {
@@ -43,6 +71,27 @@ export class TareaCard {
   public tareaForm = form(this.tareaModel, (schemaPath) => {
     required(schemaPath.titulo, { message: 'El título es obligatorio' });
     maxLength(schemaPath.titulo, 100, { message: 'El largo máximo del título es 100 caracteres.' });
+
+    validate(schemaPath.grupo, ({ value }) => {
+      if (!GRUPOS.includes(value())) {
+        return { kind: 'grupoInvalido', message: 'Elegí un grupo válido.' };
+      }
+      return null;
+    });
+
+    validate(schemaPath.prioridad, ({ value }) => {
+      if (!PRIORIDADES.includes(value())) {
+        return { kind: 'prioridadInvalida', message: 'Elegí una prioridad válida.' };
+      }
+      return null;
+    });
+
+    validate(schemaPath.id_creador, ({ value }) => {
+      if (!Number.isInteger(value()) || value() < 1) {
+        return { kind: 'sinCreador', message: 'Elegí un creador.' };
+      }
+      return null;
+    });
   });
 
   // '2:alta' -> 'alta'
@@ -50,18 +99,19 @@ export class TareaCard {
     return prioridad.split(':')[1];
   }
 
+  //El select da un string y id_creador es un número, así que se maneja a mano
+  public cambiarCreador(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.tareaForm.id_creador().value.set(Number(select.value));
+  }
+
   //terminada es una fecha o null, así que el checkbox se maneja a mano
+  //Si ya estaba terminada el checkbox está deshabilitado, así que acá siempre era null
   public cambiarTerminada(event: Event) {
     const checkbox = event.target as HTMLInputElement;
-    const fechaOriginal = this.tarea().terminada;
 
-    let terminada: string | null;
-    if (!checkbox.checked) {
-      terminada = null;
-    } else if (fechaOriginal !== null) {
-      //Si ya estaba terminada se mantiene la fecha original
-      terminada = fechaOriginal;
-    } else {
+    let terminada: string | null = null;
+    if (checkbox.checked) {
       terminada = new Date().toISOString();
     }
 

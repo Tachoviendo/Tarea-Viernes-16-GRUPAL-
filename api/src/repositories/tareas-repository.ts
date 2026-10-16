@@ -32,14 +32,14 @@ class TareasRepository {
     return result.rows[0];
   }
 
-  async crear(idCreador: number, dto: CrearTareaType): Promise<Tarea> {
+  async crear(dto: CrearTareaType): Promise<Tarea> {
     const query = `
       INSERT INTO tareas (id_creador, grupo, titulo, descripcion, prioridad)
       VALUES ($1, $2, $3, $4, COALESCE($5, '1:media'))
       RETURNING id_tarea;
     `;
     const result = await myPool.query(query, [
-      idCreador,
+      dto.id_creador,
       dto.grupo,
       dto.titulo,
       dto.descripcion ?? null,

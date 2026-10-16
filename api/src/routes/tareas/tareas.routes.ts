@@ -12,9 +12,6 @@ import {
 } from "../../schemas/tareas.ts";
 
 const tareasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
-  // Todas las rutas de tareas piden token
-  fastify.addHook("onRequest", fastify.authenticate);
-
   fastify.get(
     "/",
     {
@@ -52,7 +49,7 @@ const tareasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
     {
       schema: {
         summary: "Crear tarea",
-        description: "El creador es el usuario del token.",
+        description: "El creador es el usuario de id_creador.",
         tags: ["tareas"],
         security: [{ bearerAuth: [] }],
         body: CrearTarea,
@@ -60,7 +57,7 @@ const tareasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const tarea = await tareasRepo.crear(request.user.id_usuario, request.body);
+      const tarea = await tareasRepo.crear(request.body);
       return reply.code(201).send(tarea);
     },
   );

@@ -27,6 +27,11 @@
         <option value="admin">admin</option>
         <option value="superadmin">superadmin</option>
       </select>
+      <output>
+        @if (tareaForm.grupo().errors().length > 0) {
+          <small>{{ tareaForm.grupo().errors()[0].message }}</small>
+        }
+      </output>
     </div>
 
     <div class="flex-column">
@@ -36,6 +41,33 @@
         <option value="1:media">media</option>
         <option value="2:alta">alta</option>
       </select>
+      <output>
+        @if (tareaForm.prioridad().errors().length > 0) {
+          <small>{{ tareaForm.prioridad().errors()[0].message }}</small>
+        }
+      </output>
+    </div>
+
+    <div class="flex-column">
+      <label for="creador">Creador:</label>
+      <!-- La api no permite cambiar el creador al editar -->
+      <select id="creador" [disabled]="!esNueva()" (change)="cambiarCreador($event)">
+        @if (usuarios.hasValue()) {
+          @for (usuario of usuarios.value(); track usuario.id_usuario) {
+            <option
+              [value]="usuario.id_usuario"
+              [selected]="usuario.id_usuario === tareaModel().id_creador"
+            >
+              {{ usuario.username }}
+            </option>
+          }
+        }
+      </select>
+      <output>
+        @if (tareaForm.id_creador().errors().length > 0) {
+          <small>{{ tareaForm.id_creador().errors()[0].message }}</small>
+        }
+      </output>
     </div>
 
     <div class="flex-column">
@@ -44,6 +76,7 @@
           id="terminada"
           type="checkbox"
           [checked]="tareaModel().terminada !== null"
+          [disabled]="yaTerminada()"
           (change)="cambiarTerminada($event)"
         />
         <label for="terminada">Terminada</label>

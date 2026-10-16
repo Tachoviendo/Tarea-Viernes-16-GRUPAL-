@@ -22,6 +22,7 @@ export const Tarea = Type.Object({
 export type Tarea = Static<typeof Tarea>;
 
 export const CrearTarea = Type.Object({
+  id_creador: Type.Integer({ minimum: 1 }),
   grupo: Grupo,
   titulo: Type.String({ minLength: 1, maxLength: 100 }),
   descripcion: Type.Optional(Type.String()),
