@@ -3,4 +3,16 @@
   <a routerLink="/tareas">Tareas</a>
 </nav>
 
+<!-- Errores generales: solo se muestra si hay alguno -->
+@if (erroresService.errores().length > 0) {
+  <div class="errores">
+    <ul>
+      @for (error of erroresService.errores(); track $index) {
+        <li>{{ error }}</li>
+      }
+    </ul>
+    <button type="button" (click)="erroresService.vaciar()">Cerrar errores</button>
+  </div>
+}
+
 <router-outlet />

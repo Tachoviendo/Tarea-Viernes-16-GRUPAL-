@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { UsuarioForm } from '../../../components/usuario-form/usuario-form';
 import { UsuarioDto } from '../../../model/usuario';
+import { ErroresService } from '../../../services/errores.service';
 import { UsuarioService } from '../../../services/usuario.service';
 
 @Component({
@@ -14,6 +15,7 @@ import { UsuarioService } from '../../../services/usuario.service';
 export class CrearUsuarioPage {
   private readonly usuarioService = inject(UsuarioService);
   private readonly router = inject(Router);
+  private readonly erroresService = inject(ErroresService);
 
   // El form necesita un usuario, así que al crear se le pasa uno vacío
   protected readonly nuevoUsuario: UsuarioDto = {
@@ -27,7 +29,12 @@ export class CrearUsuarioPage {
   };
 
   protected async crear(dto: UsuarioDto) {
-    await this.usuarioService.crear(dto);
-    this.router.navigate(['/usuarios']);
+    try {
+      await this.usuarioService.crear(dto);
+      this.router.navigate(['/usuarios']);
+    } catch (error) {
+      //Ej: username repetido. Se muestra arriba en app.html y se queda en el form
+      this.erroresService.agregar(this.erroresService.obtenerMensaje(error));
+    }
   }
 }
