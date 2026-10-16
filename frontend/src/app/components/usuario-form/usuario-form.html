@@ -47,15 +47,18 @@
 
     <div class="flex-column">
       <label for="fecha_nacimiento">Fecha de nacimiento:</label>
-      <input id="fecha_nacimiento" type="date" [formField]="usuarioForm.fecha_nacimiento" />
+      <input
+        id="fecha_nacimiento"
+        type="date"
+        [formField]="usuarioForm.fecha_nacimiento"
+        [class.invalid]="usuarioForm.fecha_nacimiento().invalid()"
+      />
+      <output>
+        @if (usuarioForm.fecha_nacimiento().errors().length > 0) {
+          <small>{{ usuarioForm.fecha_nacimiento().errors()[0].message }}</small>
+        }
+      </output>
     </div>
-
-    @if (esNuevo()) {
-      <div class="flex-column">
-        <label for="password">Contraseña:</label>
-        <input id="password" type="password" [formField]="usuarioForm.password" />
-      </div>
-    }
 
     <div class="flex-column">
       <label>Grupos:</label>
@@ -95,18 +98,4 @@
 
     <button type="submit">Guardar</button>
   </form>
-
-  <!-- Para ver el estado del form mientras se prueba -->
-  <p>
-    Valid username: <strong>{{ this.usuarioForm.username().valid() }}</strong><br />
-    InValid username: <strong>{{ this.usuarioForm.username().invalid() }}</strong><br />
-    Touched username: <strong>{{ this.usuarioForm.username().touched() }}</strong><br />
-    Errors: <strong>{{ this.usuarioForm.username().errors() | json }}</strong>
-  </p>
-
-  <p>
-    Valid form: <strong>{{ this.usuarioForm().valid() }}</strong><br />
-    Invalid form: <strong>{{ this.usuarioForm().invalid() }}</strong><br />
-    Touched form: <strong>{{ this.usuarioForm().touched() }}</strong>
-  </p>
 </div>

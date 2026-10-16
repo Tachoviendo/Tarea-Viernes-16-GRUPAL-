@@ -5,7 +5,7 @@
 @if (usuario.isLoading()) {
   <p>Cargando...</p>
 } @else if (usuario.value(); as u) {
-  <app-usuario-form [usuario]="u" (guardar)="actualizar($event)" />
+  <app-usuario-form [usuario]="u" [modoEdicion]="true" (guardar)="actualizar($event)" />
 } @else {
   <p>No existe el usuario {{ idUsuario() }}.</p>
 }
