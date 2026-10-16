@@ -24,7 +24,16 @@ export class EditarUsuarioPage {
   });
 
   protected async actualizar(dto: UsuarioDto) {
-    await this.usuarioService.actualizar(Number(this.idUsuario()), dto);
+    const usuarioActualizar = {
+      nombres: dto.nombres,
+      apellidos: dto.apellidos,
+      fecha_nacimiento: dto.fecha_nacimiento,
+      grupos: dto.grupos,
+      activo: dto.activo,
+    };
+
+    await this.usuarioService.actualizar(Number(this.idUsuario()), usuarioActualizar);
+
     this.router.navigate(['/usuarios']);
   }
 }

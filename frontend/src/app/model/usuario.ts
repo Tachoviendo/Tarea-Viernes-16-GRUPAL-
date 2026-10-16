@@ -15,3 +15,11 @@ export type Usuario = {
 // Lo que se manda al crear o editar: los campos que calcula la "base" no van
 // password solo va al crear: la api no deja cambiarla al editar
 export type UsuarioDto = Omit<Usuario, 'id_usuario' | 'nombre_completo'> & { password?: string };
+
+export type ActualizarUsuarioDto = {
+  nombres: string;
+  apellidos: string;
+  fecha_nacimiento: string;
+  grupos: Grupo[];
+  activo: boolean;
+};
