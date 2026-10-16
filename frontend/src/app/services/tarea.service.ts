@@ -4,19 +4,6 @@ import { firstValueFrom } from 'rxjs';
 import { Tarea, TareaDto } from '../model/tarea';
 import { environment } from '../../environments/environment';
 
-// // Igual que "CURRENT_TIMESTAMP - INTERVAL 'x hours'" del seed
-// function haceHoras(horas: number): string {
-//   return new Date(Date.now() - horas * 60 * 60 * 1000).toISOString();
-// }
-
-// function haceDias(dias: number): string {
-//   return haceHoras(dias * 24);
-// }
-
-// function calcularEstado(terminada: string | null): Tarea['estado'] {
-//   return terminada ? 'Cerrada' : 'Abierta';
-// }
-
 @Injectable({
   providedIn: 'root',
 })
@@ -57,14 +44,16 @@ export class TareaService {
     );
 
     if (dto.terminada !== null) {
-      tarea = await firstValueFrom(
-        this.httpClient.patch<Tarea>(`${this.baseUrl}/${idTarea}/finalizar`, {
-          fecha: dto.terminada,
-        }),
-      );
+      tarea = await this.finalizar(idTarea, dto.terminada);
     }
 
     return tarea;
+  }
+
+  async finalizar(idTarea: number, fecha: string): Promise<Tarea> {
+    return await firstValueFrom(
+      this.httpClient.patch<Tarea>(`${this.baseUrl}/${idTarea}/finalizar`, { fecha }),
+    );
   }
 
   async eliminar(idTarea: number): Promise<void> {
