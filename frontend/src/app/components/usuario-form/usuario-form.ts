@@ -53,6 +53,30 @@ export class UsuarioForm {
       }
       return undefined;
     });
+
+    //Solo al crear: al editar no se controla la edad
+    validate(schemaPath.fecha_nacimiento, ({ value }) => {
+      if (!this.esNuevo() || value() === '') {
+        return null;
+      }
+
+      //value() viene como 'YYYY-MM-DD'
+      const [anio, mes, dia] = value().split('-').map(Number);
+      const hoy = new Date();
+
+      let edad = hoy.getFullYear() - anio;
+      //Si este año todavía no cumplió, tiene un año menos
+      const yaCumplio =
+        hoy.getMonth() + 1 > mes || (hoy.getMonth() + 1 === mes && hoy.getDate() >= dia);
+      if (!yaCumplio) {
+        edad--;
+      }
+
+      if (edad < 18) {
+        return { kind: 'menorDeEdad', message: 'El usuario tiene que ser mayor de edad.' };
+      }
+      return null;
+    });
   });
 
   //Los grupos son un array, así que los checkboxes se manejan a mano
