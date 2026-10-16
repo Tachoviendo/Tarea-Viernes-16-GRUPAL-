@@ -25,7 +25,7 @@ export const CrearUsuario = Type.Object({
   apellidos: Type.String({ minLength: 1 }),
   fecha_nacimiento: Type.String({ format: "date" }),
   grupos: Type.Optional(Type.Array(Grupo, { minItems: 1, uniqueItems: true })),
-  password: Type.String({ minLength: 8 }),
+  password: Type.Optional(Type.String({ minLength: 8 })),
 });
 export type CrearUsuarioType = Static<typeof CrearUsuario>;
 
